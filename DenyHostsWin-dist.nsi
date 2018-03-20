@@ -22,7 +22,7 @@ InstallDir $PROGRAMFILES\${APP_NAME}
 
 ; License
 LicenseText "GNU General Public License v2.0"
-LicenseData "LICENSE.txt"
+LicenseData "LICENSE"
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
@@ -51,7 +51,7 @@ Section "${APP_NAME} (required)"
   ; Write files to install directory
   SetOutPath $INSTDIR
   File "msg-template.txt"
-  File "LICENSE.txt"
+  File "LICENSE"
   File "README.txt"
   
   SetOutPath $INSTDIR\bin
@@ -83,6 +83,8 @@ Section "${APP_NAME} (required)"
   Exec '"$SYSDIR\netsh.exe" advfirewall set allprofiles logging maxfilesize 16384'
   
   ; Write default settings into the registry
+  SetRegView 64
+  
   WriteRegStr	HKLM "SOFTWARE\${APP_NAME}"								"CurrentVersion"			"${VERSION}"
   WriteRegDWORD	HKLM "SOFTWARE\${APP_NAME}\${VERSION}"					"Threshold"					0x00000014
   WriteRegStr	HKLM "SOFTWARE\${APP_NAME}\${VERSION}\FirewallRules"	"FwRuleBaseName"			"AUTO-BLACKLISTED IP ADDRESSES"
@@ -125,12 +127,14 @@ UninstallIcon "${NSISDIR}\Contrib\Graphics\Icons\nsis1-uninstall.ico"
 Section "Uninstall"
   
   ; Remove registry keys
+  SetRegView 64
+  
   DeleteRegKey	HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
   DeleteRegKey	HKLM "SOFTWARE\${APP_NAME}"
   
   ; Remove files and uninstaller
   Delete "$INSTDIR\msg-template.txt"
-  Delete "$INSTDIR\LICENSE.txt"
+  Delete "$INSTDIR\LICENSE"
   Delete "$INSTDIR\README.txt"
   Delete "$INSTDIR\uninstall.exe"
 

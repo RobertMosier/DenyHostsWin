@@ -29,7 +29,7 @@ Sub Main
 	lr.Rotate
 	'We are done with LogRotate so clean up
 	Set lr = Nothing
-	
+
 	'Create WinAdvFw_LogParse
 	Set lp = New WinAdvFw_LogParse
 	'Create WinAdvFw
@@ -37,31 +37,37 @@ Sub Main
 	'Create GMailNotify
 	Set notify = New GMailNotify
 	
-	'Check each IP if it has more than THRESHOLD hits
-	For Each sIP In lp.UniqueIPAddresses
-		If lp.GetUniqueIP_Hits(sIP) > THRESHOLD Then
-		
-			'Create the IPv4Addr object so we can validate addresses
-			Set oIP = New IPv4Addr
-			If oIP.ValidIPv4(sIP) Then
+	If lp.UniqueIPCount > 0 Then
+	
+		'Check each IP if it has more than THRESHOLD hits
+		For Each sIP In lp.UniqueIPAddresses
+			If lp.GetUniqueIP_Hits(sIP) > THRESHOLD Then
 			
-				'Since this IP is over the THRESHOLD we should block it in the firewall
-				fw.BlockIPv4Address sIP
+				'Create the IPv4Addr object so we can validate addresses
+				Set oIP = New IPv4Addr
+				If oIP.ValidIPv4(sIP) Then
 				
-				'Add the blocked IP to the array of IPv4Addr
-				oIP.SetAddress sIP
-				ArrayPush aAddrs, oIP
+					'Since this IP is over the THRESHOLD we should block it in the firewall
+					fw.BlockIPv4Address sIP
+					
+					'Add the blocked IP to the array of IPv4Addr
+					oIP.SetAddress sIP
+					ArrayPush aAddrs, oIP
+				End If
 			End If
+		Next
+		
+		If IsArray(aAddrs) Then
+			'Sort the IP addresses for easily identifying trends like
+			'multiple addresses within same subnet
+			SortAddrs aAddrs
+			
+			'Place our found values in the email message template and send it
+			notify.preprocessMessage aAddrs
+			notify.Send()
 		End If
-	Next
-	
-	'Sort the IP addresses for easily identifying trends like
-	'multiple addresses within same subnet
-	SortAddrs aAddrs
-	
-	'Place our found values in the email message template and send it
-	notify.preprocessMessage aAddrs
-	notify.Send()
+		
+	End If
 	
 	'Clean up
 	Set fw = Nothing
@@ -97,21 +103,27 @@ Sub InitSettings
 	'These used to be constants but are now variables,
 	'just have not changed the names to match convention yet.
 	THRESHOLD					= rs.Threshold
-	FW_RULE_BASE_NAME			= rs.FwRuleBaseName
-	FW_RULE_GROUP_NAME			= rs.FwRuleGroupName
-	FW_RULE_DESCRIPTION			= rs.FwRuleDescription
-	FW_RULE_LOCAL_PORTS			= rs.FwRuleLocalPorts
-	FW_LOG_FILE					= rs.FwLogFile
-	FW_PORT						= rs.FwPort
-	NOTIFY_ON_THRESHOLD			= rs.NotifyOnThreshold
+	FW_RULE_BASE_NAME			= ExpandEnvVars(rs.FwRuleBaseName)
+	FW_RULE_GROUP_NAME			= ExpandEnvVars(rs.FwRuleGroupName)
+	FW_RULE_DESCRIPTION			= ExpandEnvVars(rs.FwRuleDescription)
+	FW_RULE_LOCAL_PORTS			= ExpandEnvVars(rs.FwRuleLocalPorts)
+	FW_LOG_FILE					= ExpandEnvVars(rs.FwLogFile)
+	FW_PORT						= ExpandEnvVars(rs.FwPort)
+	
+	If rs.NotifyOnThreshold > 0 Then
+		NOTIFY_ON_THRESHOLD = True
+	Else
+		NOTIFY_ON_THRESHOLD = False
+	End If
+	
 	NOTIFY_THRESHOLD			= rs.NotifyThreshold
-	NOTIFY_EMAIL_FROM			= rs.NotifyEmailFrom
-	NOTIFY_EMAIL_TO				= rs.NotifyEmailTo
-	NOTIFY_EMAIL_SUBJECT		= rs.NotifyEmailSubject
-	NOTIFY_EMAIL_MSG_TEMPLATE	= rs.NotifyEmailMsgTemplate
+	NOTIFY_EMAIL_FROM			= ExpandEnvVars(rs.NotifyEmailFrom)
+	NOTIFY_EMAIL_TO				= ExpandEnvVars(rs.NotifyEmailTo)
+	NOTIFY_EMAIL_SUBJECT		= ExpandEnvVars(rs.NotifyEmailSubject)
+	NOTIFY_EMAIL_MSG_TEMPLATE	= ExpandEnvVars(rs.NotifyEmailMsgTemplate)
 	NOTIFY_SMTP_AUTH_USER		= rs.NotifySMTPAuthUser
 	NOTIFY_SMTP_AUTH_PASS		= rs.NotifySMTPAuthPass
-	LR_LOG_PATH					= rs.LrLogPath
-	LR_LOG_FILENAME				= rs.LrLogFilename
+	LR_LOG_PATH					= ExpandEnvVars(rs.LrLogPath)
+	LR_LOG_FILENAME				= ExpandEnvVars(rs.LrLogFilename)
 	LR_MAX_ARCHIVES				= rs.LrMaxArchives
 End Sub
