@@ -1,0 +1,60 @@
+<?XML version="1.0"?>
+<package>
+	<job id="Test_WinAdvFw">
+		<script language="VBScript" src="..\src\Settings.vbs"></script>
+		<script language="VBScript" src="..\src\HelperLib.vbs"></script>
+		<script language="VBScript" src="..\src\WinAdvFw.vbs"></script>
+		
+		<script language="VBScript" src="Test_WinAdvFw.vbs"></script>
+		<script language="VBScript">
+			Test_WinAdvFw
+		</script>
+	</job>
+	<job id="Test_WinAdvFw_LogParse">
+		<script language="VBScript" src="..\src\Settings.vbs"></script>
+		<script language="VBScript" src="..\src\HelperLib.vbs"></script>
+		<script language="VBScript" src="..\src\WinAdvFw_LogParse.vbs"></script>
+		
+		<script language="VBScript" src="Test_WinAdvFw_LogParse.vbs"></script>
+		<script language="VBScript">
+			Test_WinAdvFw_LogParse
+		</script>
+	</job>
+	<job id="Test_IPv4Addr">
+		<script language="VBScript" src="..\src\IPv4Addr.vbs"></script>
+		
+		<script language="VBScript" src="Test_IPv4Addr.vbs"></script>
+		<script language="VBScript">
+			Test_IPv4Addr
+		</script>
+	</job>
+	<job id="Test_GMailNotify">
+		<script language="VBScript" src="..\src\Settings.vbs"></script>
+		<script language="VBScript" src="..\src\HelperLib.vbs"></script>
+		<script language="VBScript" src="..\src\IPv4Addr.vbs"></script>
+		<script language="VBScript" src="..\src\GMailNotify.vbs"></script>
+		
+		<script language="VBScript" src="Test_GMailNotify.vbs"></script>
+		<script language="VBScript">
+			Test_GMailNotify
+		</script>
+	</job>
+	<job id="Test_LogRotate">
+		<script language="VBScript" src="..\src\Settings.vbs"></script>
+		<script language="VBScript" src="..\src\HelperLib.vbs"></script>
+		<script language="VBScript" src="..\src\LogRotate.vbs"></script>
+		
+		<script language="VBScript" src="Test_LogRotate.vbs"></script>
+		<script language="VBScript">
+			Test_LogRotate
+		</script>
+	</job>
+	<job id="Test_RegSettings">
+		<script language="VBScript" src="..\src\RegSettings.vbs"></script>
+		
+		<script language="VBScript" src="Test_RegSettings.vbs"></script>
+		<script language="VBScript">
+			Test_RegSettings
+		</script>
+	</job>
+</package>

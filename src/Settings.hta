@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>DenyHostsWin Settings</title>
+ 
+    <HTA:APPLICATION
+        APPLICATIONNAME = "DenyHostsWin Settings"
+    />
+	
+	<style type="text/css">
+	tr:hover {
+		background-color: #dddddd;
+	}
+	
+	input.numbers {
+		width: 4em;
+	}
+	
+	input.text {
+		width: 30em;
+	}
+	
+	input.path {
+		width: 40em;
+	}
+	
+	#areaFwRuleDescription {
+		width: 30em;
+	}
+	
+	button {
+		margin-right: 20px;
+		width: 64px;
+	}
+	
+	button.ellipsis {
+		margin-left: 10px;
+		width: 24px;
+	}
+
+	.tooltiptext {
+		display: none;
+		background-color: blue;
+		color: #fff;
+		text-align: left;
+		padding: 5px 0;
+	}
+	</style>
+	<script language="vbscript" src="RegSettings.vbs"></script>
+	<script language="vbscript" src="SettingsEditor.vbs"></script>
+</head>
+<body>
+    <h1>DenyHostsWin Settings</h1>
+	Current Version is <span id="elCurrentVersion"></span>
+	<br /><br />
+    <table>
+		<tr><th colspan="2" align="left">Global</th></tr>
+		<tr class="tooltiptext" id="ttThreshold">
+			<td colspan="2">
+				This is an Integer representing how many times a remote host has failed login
+				before it is assumed to be hostile and gets blocked in the firewall.
+				<br /><br />
+				Default is 20
+			</td>
+		</tr>
+		<tr>
+			<td>Threshold:</td>
+			<td><input type="text" id="txtThreshold" class="numbers"></input></td>
+		</tr>
+		<tr><th colspan="2" align="left"><br />Firewall Rules</th></tr>
+		<tr class="tooltiptext" id="ttFwRuleBaseName">
+			<td colspan="2">
+				This is the name that will show up as a firewall rule in the Windows Advanced
+				Firewall. In fact there will be two, one with " - TCP" the other with " - UDP"
+				appended to it.
+				<br /><br />
+				Default is "AUTO-BLACKLISTED IP ADDRESSES"
+			</td>
+		</tr>
+		<tr>
+			<td>Base Name:</td>
+			<td><input type="text" id="txtFwRuleBaseName" class="text"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttFwRuleGroupName">
+			<td colspan="2">
+				The group name the firewall rule will be a member of. This is a convenience thing for
+				when manually managing the rules. Otherwise this software makes no use of it.
+				<br /><br />
+				Default is "AUTO-BLACKLIST"
+			</td>
+		</tr>
+		<tr>
+			<td>Group Name:</td>
+			<td><input type="text" id="txtFwRuleGroupName" class="text"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttFwRuleDescription">
+			<td colspan="2">
+				Similar to the group name this is a convenience for when manually managing the
+				firewall since this software makes no use of it. You can even set it to an
+				empty string.
+				<br /><br />
+				Default is "Remote IP addresses blocked automatically"
+			</td>
+		</tr>
+		<tr>
+			<td>Description:</td>
+			<td><textarea id="areaFwRuleDescription" rows="3"></textarea></td>
+		</tr>
+		<tr class="tooltiptext" id="ttFwRuleLocalPorts">
+			<td colspan="2">
+				This is the port or ports to block remote addresses from accessing. Acceptable
+				values are;
+				<br />
+				1) A single port to block offenders from a single service such as RDP only.
+				FW_RULE_LOCAL_PORTS = "3389"
+				<br />
+				2) Multiple non-contiguous ports to block offenders from multiple specific
+				services such as FTP, SSH, & HTTP.
+				FW_RULE_LOCAL_PORTS = "21,22,80"
+				<br />
+				3) A range of ports to block offenders from multiple contiguous services or
+				even all services. (DEFAULT)
+				<br /><br />
+				Default is "0-65535"
+			</td>
+		</tr>
+		<tr>
+			<td>Local Ports:</td>
+			<td><input type="text" id="txtFwRuleLocalPorts" class="text"></input></td>
+		</tr>
+		<tr><th colspan="2" align="left"><br />Firewall Log</th></tr>
+		<tr class="tooltiptext" id="ttFwLogFile">
+			<td colspan="2">
+				This is the log file to read from. Logging must be enabled.
+				We use the 0.pfirewall.log file because we are rotating the log before we
+				parse it.
+				<br /><br />
+				Default is "%windir%\system32\logfiles\firewall\0.pfirewall.log"
+			</td>
+		</tr>
+		<tr>
+			<td>Log File:</td>
+			<td>
+				<input type="text" id="txtFwLogFile" class="path"></input>
+				<button class="ellipsis" id="btnFwLogFile">...</button>
+			</td>
+		</tr>
+		<tr class="tooltiptext" id="ttFwPort">
+			<td colspan="2">
+				This is the network port to search for in the log file.
+				<br /><br />
+				Default is "3389"
+			</td>
+		</tr>
+		<tr>
+			<td>Port:</td>
+			<td><input type="text" id="txtFwPort" class="text"></input></td>
+		</tr>
+		<tr><th colspan="2" align="left"><br />Email Notify</th></tr>
+		<tr class="tooltiptext" id="ttNotifyOnThreshold">
+			<td colspan="2">
+				Should we notify admin by email if the number of blocked IPv4 addresses
+				exceeds Blocked Threshold?
+				<br /><br />
+				Default is True
+			</td>
+		</tr>
+		<tr>
+			<td>On Threshold:</td>
+			<td><input type="checkbox" id="chkNotifyOnThreshold"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttNotifyThreshold">
+			<td colspan="2">
+				After how many blocked IPv4 addresses should we notify the admin by email?
+				(Use an Unsigned Integer value equal to or greater than zero)
+				<br /><br />
+				Default is 5
+			</td>
+		</tr>
+		<tr>
+			<td>Threshold:</td>
+			<td><input type="text" id="txtNotifyThreshold" class="numbers"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttNotifyEmailFrom">
+			<td colspan="2">
+				The email address to send from which will be a gmail.com address. This can be
+				formatted as name and email like, "GMail User" <example@gmail.com>
+				<br /><br />
+				Default is "DenyHostsWin" <relay.example@gmail.com>
+			</td>
+		</tr>
+		<tr>
+			<td>Email From:</td>
+			<td><input type="text" id="txtNotifyEmailFrom" class="text"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttNotifyEmailTo">
+			<td colspan="2">
+				The email address to send to which does not have to be a gmail.com address.
+				This can be formatted as name and email like, "Outlook User" <example@outlook.com>
+				<br /><br />
+				Default is "Administrator" <admin@example.com>
+			</td>
+		</tr>
+		<tr>
+			<td>Email To:</td>
+			<td><input type="text" id="txtNotifyEmailTo" class="text"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttNotifyEmailSubject">
+			<td colspan="2">
+				The subject line to place within the email sent. This is a great opportunity
+				to customize this instance to tell the admin what server this came from.
+				<br /><br />
+				Default is "ALERT from DenyHostsWin server.domain.tld"
+			</td>
+		</tr>
+		<tr>
+			<td>Email Subject:</td>
+			<td><input type="text" id="txtNotifyEmailSubject" class="text"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttNotifyEmailMsgTemplate">
+			<td colspan="2">
+				The path to the message template file.
+				<br /><br />
+				Format of a message template file is a simple txt file with a few variable
+				placeholders which will get preprocessed into values from the script before
+				the email is sent.<br />
+				Variable Placeholders<br />
+				${BLOCKED_COUNT}	Represents the number of IPv4 addresses blocked.<br />
+				${THRESHOLD}		The value set above in NOTIFY_THRESHOLD.<br />
+				${BLOCKED_ADDRS}	A list of IPv4 addresses blocked one per line.
+				<br /><br />
+				Default is "%PROGRAMFILES(X86)%\DenyHostsWin\msg-template.txt"
+			</td>
+		</tr>
+		<tr>
+			<td>Template File:</td>
+			<td>
+				<input type="text" id="txtNotifyEmailMsgTemplate" class="path"></input>
+				<button class="ellipsis" id="btnFwLogFile">...</button>
+			</td>
+		</tr>
+		<tr class="tooltiptext" id="ttNotifySMTPAuthUser">
+			<td colspan="2">
+				The user name of the gmail account to send from. This is also the email
+				address but must be formatted plain and simple.
+				<br /><br />
+				Default is "relay.example@gmail.com"
+			</td>
+		</tr>
+		<tr>
+			<td>SMTP Auth User:</td>
+			<td><input type="text" id="txtNotifySMTPAuthUser" class="text"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttNotifySMTPAuthPass">
+			<td colspan="2">
+				The password for the gmail account to send from. This is case-sensitive.
+				<br /><br />
+				Default is "Your_smtp_password"
+			</td>
+		</tr>
+		<tr>
+			<td>SMTP Auth Pass:</td>
+			<td><input type="password" id="txtNotifySMTPAuthPass" class="text"></input></td>
+		</tr>
+		<tr><th colspan="2" align="left"><br />Log Rotate</th></tr>
+		<tr class="tooltiptext" id="ttLrLogPath">
+			<td colspan="2">
+				The path of the directory containing the log file. Do not leave a trailing
+				slash.
+				<br /><br />
+				Default is "%systemroot%\system32\LogFiles\Firewall"
+			</td>
+		</tr>
+		<tr>
+			<td>Log Path:</td>
+			<td><input type="text" id="txtLrLogPath" class="path"></input></td>
+		</tr>
+		<tr class="tooltiptext" id="ttLrLogFilename">
+			<td colspan="2">
+				The file name of the log to be rotated. Do not include the path.
+				<br /><br />
+				Default is "pfirewall.log"
+			</td>
+		</tr>
+		<tr>
+			<td>Log Filename:</td>
+			<td>
+				<input type="text" id="txtLrLogFilename" class="text"></input>
+			</td>
+		</tr>
+		<tr class="tooltiptext" id="ttLrMaxArchives">
+			<td colspan="2">
+				How many archived log files do we want to keep? Use an unsigned integer here.
+				When an archive gets rotated to have a file name prefix equal to this value,
+				it will get deleted.
+				<br /><br />
+				Default is 5
+			</td>
+		</tr>
+		<tr>
+			<td>Max Archives:</td>
+			<td><input type="text" id="txtLrMaxArchives" class="numbers"></input></td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right">
+				<button id="btnReset">Reset</button>
+				<button id="btnOK">OK</button>
+				<button id="btnCancel">Cancel</button>
+				<button id="btnApply">Apply</button>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

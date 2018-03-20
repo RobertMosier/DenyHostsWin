@@ -1,0 +1,17 @@
+<?XML version="1.0"?>
+<package>
+	<job id="DenyHostsWin">
+		<script language="VBScript" src="Settings.vbs"></script>
+		<script language="VBScript" src="HelperLib.vbs"></script>
+		<script language="VBScript" src="RegSettings.vbs"></script>
+		<script language="VBScript" src="IPv4Addr.vbs"></script>
+		<script language="VBScript" src="LogRotate.vbs"></script>
+		<script language="VBScript" src="WinAdvFw_LogParse.vbs"></script>
+		<script language="VBScript" src="WinAdvFw.vbs"></script>
+		<script language="VBScript" src="GMailNotify.vbs"></script>
+		<script language="VBScript" src="DenyHostsWin.vbs"></script>
+		<script language="VBScript">
+			Main
+		</script>
+	</job>
+</package>

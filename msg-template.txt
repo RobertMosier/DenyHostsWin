@@ -1,0 +1,12 @@
+Alert Server Admin,
+
+DenyHostsWin has blocked ${BLOCKED_COUNT} IPv4 addresses which is more than the current threshold of ${THRESHOLD} allows. The below addresses have been blocked but this notification is to alert you that suspicious activity has occurred and may require human intervention.
+
+${BLOCKED_ADDRS}
+
+
+Your Smart Line of Defense,
+DenyHostsWin
+
+Written by Robert Mosier
+Revision 2018.03.13
